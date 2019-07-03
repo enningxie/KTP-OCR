@@ -225,6 +225,7 @@ def main():
 
     # test
     # result_list = ['—————— ————— —&——— ——————', 'PROVINSI DAEGAH ISTIMAWA YOGYEKARTA', 'KABUPATEN SLEMQN', 'NIK : 347LL40209790001', 'Nama :RIYANTO. SE', 'Tempat/Tgi Lahir : GROBOGAN. 02-09-1979', 'Jenis Kelamin : LAKI-LAKI Gol Darah :O', 'Alamat PRM PURI DOMAS D-3. SEMPU', 'RTARW 001: 024', 'Kel/Desa : WEDOMARTANI', 'Kecamatan : NGEMPLAK', 'Agama :ISPAM', 'Status Perkawman: KAWAN PE', 'Pekerjaan : PEDAGANG 05-06-2012', 'Kewarganegaraan: WNI SA—', 'Berlaku Hingga  :02-09-2017 N EA']
+    print('-------origin rec-------')
     print(result_list)
     loc2index = dict()
     for i, tmp_line in enumerate(result_list):
@@ -293,6 +294,8 @@ def main():
                     tmp_data.pop()
                 tmp_data.append(id_number)
             else:
+                while len(tmp_data) > 3:
+                    tmp_data.pop()
                 tmp_data[2] = id_number
 
         # 对宗教一行进行处理
