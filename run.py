@@ -9,7 +9,7 @@ from operator import itemgetter, attrgetter
 
 # 路径配置
 ROOT_PATH = os.getcwd()
-IMAGE_PATH = os.path.join(ROOT_PATH, 'images/ktp5.png')
+IMAGE_PATH = os.path.join(ROOT_PATH, 'images/ktp6.png')
 LINE_REC_PATH = os.path.join(ROOT_PATH, 'data/ID_CARD_KEYWORD.csv')
 CITIES_REC_PATH = os.path.join(ROOT_PATH, 'data/CITIES.csv')
 RELIGION_REC_PATH = os.path.join(ROOT_PATH, 'data/RELIGION.csv')
@@ -44,6 +44,7 @@ def strip_op(result_raw):
             new_result_list.append(tmp_result)
     return new_result_list
 
+
 # KTP_ number
 # NIK_NUMBER模版匹配识别
 # 从左到右进行排列识别
@@ -59,8 +60,8 @@ def sort_contours(cnts, method="left-to-right"):
                                         key=lambda b: b[1][i], reverse=reverse))
     return cnts, boundingBoxes
 
-def return_id_number(image, gray):
 
+def return_id_number(image, gray):
     # ret, thresh1 = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)#二值处理
     # 定义核函数
     rectKernel = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 15))  # 返回矩形核函数
@@ -323,8 +324,13 @@ def main():
                 if tmp_sim_np[arg_max] >= 0.6:
                     tmp_data[tmp_index + 2] = marriage_df[0].values[arg_max]
         if 'Alamat' in tmp_data:
-            if "!" in tmp_data:
-                tmp_data.replace("!", "I")
+            for tmp_index in range(len(tmp_data)):
+                if "!" in tmp_data[tmp_index]:
+                    tmp_data[tmp_index] = tmp_data[tmp_index].replace("!", "I")
+                if "1" in tmp_data[tmp_index]:
+                    tmp_data[tmp_index] = tmp_data[tmp_index].replace("1", "I")
+                if "i" in tmp_data[tmp_index]:
+                    tmp_data[tmp_index] = tmp_data[tmp_index].replace("i", "I")
     for tmp_data in last_result_list:
         print(' '.join(tmp_data))
 
