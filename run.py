@@ -9,7 +9,7 @@ from operator import itemgetter, attrgetter
 
 # 路径配置
 ROOT_PATH = os.getcwd()
-IMAGE_PATH = os.path.join(ROOT_PATH, 'images/ktp7.png')
+IMAGE_PATH = os.path.join(ROOT_PATH, 'images/ktp5.png')
 LINE_REC_PATH = os.path.join(ROOT_PATH, 'data/ID_CARD_KEYWORD.csv')
 CITIES_REC_PATH = os.path.join(ROOT_PATH, 'data/CITIES.csv')
 RELIGION_REC_PATH = os.path.join(ROOT_PATH, 'data/RELIGION.csv')
@@ -23,10 +23,12 @@ ID_NUMBER = 3
 def ocr_raw(image_path):
     # (1) Read
     img_raw = cv2.imread(image_path)
-    id_number = return_id_number(img_raw)
-    # todo: image resize Ponky
-    img_gray = cv2.cvtColor(img_raw, cv2.COLOR_BGR2GRAY)
+    image = cv2.resize(img_raw, (50 * 16, 500))
+    img_gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+    id_number = return_id_number(image, img_gray)
+    # img_gray = cv2.cvtColor(img_raw, cv2.COLOR_BGR2GRAY)
     # (2) Threshold
+    cv2.fillPoly(img_gray, pts=[np.asarray([(540, 150), (540, 499), (798, 499), (798, 150)])], color=(255, 255, 255))
     th, threshed = cv2.threshold(img_gray, 127, 255, cv2.THRESH_TRUNC)
     # (3) Detect
     result_raw = pytesseract.image_to_string(threshed, lang="ind")
@@ -57,9 +59,8 @@ def sort_contours(cnts, method="left-to-right"):
                                         key=lambda b: b[1][i], reverse=reverse))
     return cnts, boundingBoxes
 
-def return_id_number(image):
-    image = cv2.resize(image, (50 * 16, 500))
-    gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+def return_id_number(image, gray):
+
     # ret, thresh1 = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)#二值处理
     # 定义核函数
     rectKernel = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 15))  # 返回矩形核函数
@@ -104,10 +105,10 @@ def return_id_number(image):
     # print(locs[1][0])
     nik = image[locs[1][1] - 10:locs[1][1] + locs[1][3] + 10, locs[1][0] - 10:locs[1][0] + locs[1][2] + 10]
     # cv_show('nik', nik)
-    cv2.imshow('1', nik)
+
     # print(nik)
     text = image[locs[2][1] - 10:locs[2][1] + locs[2][3] + 10, locs[2][0] - 10:locs[2][0] + locs[2][2] + 10]
-    cv2.imshow('2', text)
+
     # 读取一个模板图像
     img = cv2.imread("images/module.jpeg")
     # 灰度图
@@ -321,7 +322,9 @@ def main():
                 arg_max = np.argmax(tmp_sim_np)
                 if tmp_sim_np[arg_max] >= 0.6:
                     tmp_data[tmp_index + 2] = marriage_df[0].values[arg_max]
-
+        if 'Alamat' in tmp_data:
+            if "!" in tmp_data:
+                tmp_data.replace("!", "I")
     for tmp_data in last_result_list:
         print(' '.join(tmp_data))
 
